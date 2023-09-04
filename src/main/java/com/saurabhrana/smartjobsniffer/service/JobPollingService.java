@@ -1,32 +1,51 @@
 package com.saurabhrana.smartjobsniffer.service;
 
+import com.saurabhrana.smartjobsniffer.DTO.Actions;
+import com.saurabhrana.smartjobsniffer.DTO.Content;
 import com.saurabhrana.smartjobsniffer.DTO.JobPostingDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 @Service
 public class JobPollingService {
-//    @Autowired
-//    private WebClient webClient;
+    private final List<JobPostingDTO> resultsList = new CopyOnWriteArrayList<>();
 
 //    @Scheduled(fixedRate = 5000) // Poll every 5 seconds
+
     public void pollApi() {
         WebClient webClient = WebClient.create();
 
         String url = "https://jobs.smartrecruiters.com/sr-jobs/search?limit=100&keyword=software%20engineer";
+        // Add result to list
         webClient.get()
                 .uri(url)
                 .retrieve()
                 .bodyToMono(JobPostingDTO.class)
-                .subscribe(result -> {
-                    // Send result to Slack
-//                    sendToSlack(Objects.requireNonNull(result));
-                    System.out.println(result);
-                });
+                .doOnNext(resultsList::add)
+                .doOnTerminate(this::extractActions)  // Call after WebClient operation is done
+                .subscribe();
 
+        // for every actions->details URL make a call and get the results
+//        resultsList.stream().map(r -> r.getContent().)
 
         // Send result to Slack
 //        sendToSlack(result);
+    }
+
+    public void extractActions() {
+        for (JobPostingDTO jobPosting : resultsList) {
+            if (jobPosting.getContent() != null) {
+                for (Content content : jobPosting.getContent()) {
+                    Actions actions = content.getActions();
+                    if (actions != null) {
+                        System.out.println("Actions details: " + actions.getDetails());
+                    }
+                }
+            }
+        }
     }
 
 //    private void sendToSlack(String message) {
