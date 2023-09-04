@@ -3,16 +3,20 @@ package com.saurabhrana.smartjobsniffer.service;
 import com.saurabhrana.smartjobsniffer.DTO.Actions;
 import com.saurabhrana.smartjobsniffer.DTO.Content;
 import com.saurabhrana.smartjobsniffer.DTO.JobPostingDTO;
+import com.saurabhrana.smartjobsniffer.entity.Jobs;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class JobPollingService {
     private final List<JobPostingDTO> resultsList = new CopyOnWriteArrayList<>();
+    private final List<Jobs> jobsList = new CopyOnWriteArrayList<>();
     private final List<String> actionUrls = new ArrayList<>();
 
 //    @Scheduled(fixedRate = 5000) // Poll every 5 seconds
@@ -30,7 +34,47 @@ public class JobPollingService {
                 .doOnTerminate(this::extractActionsUrlForUnitedStates)  // Call after WebClient operation is done
                 .subscribe();
 
-        // iterate action URLs and
+
+        saveJobPostings(actionUrls);
+
+    }
+
+    private void saveJobPostings(List<String> actionUrls) {
+
+        List<Mono<Jobs>> monos = new ArrayList<>();
+
+        // iterate action URLs and save them to Job table
+        WebClient webClient = WebClient.create();
+        for(String url: actionUrls) {
+            Mono<Jobs> mono = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(Jobs.class)
+                    .doOnNext(jobsList::add);
+            monos.add(mono);
+
+        }
+
+        Mono.when(monos)
+                .doOnTerminate(this::checkJobList)
+                .subscribe();
+
+
+    }
+
+    private void checkJobList() {
+        System.out.println(jobsList);
+
+        var javaJobs = jobsList.stream().filter(job -> job.getJobAd().getSections().getJobDescription().getText().contains("Java")).collect(Collectors.toList());
+//        var texts = jobsList.stream().map(job -> job.getJobAd().getSections().getQualifications().getText()).collect(Collectors.toList());
+        for(var job: jobsList) {
+            System.out.println("job name: " + job.getName());
+            System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
+
+//            if( job.getJobAd().getSections().getQualifications().getText().contains("Java")) {
+//                System.out.println("BAZINGAA!!");
+//            }
+        }
 
     }
 
