@@ -1,5 +1,6 @@
 package com.saurabhrana.smartjobsniffer.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Date;
@@ -13,12 +14,12 @@ import java.util.Date;
 @AllArgsConstructor
 public class Jobs {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "localId", nullable = false)
     private Long localId;
 
-    @Column(name="id")
-    private String id;
+    @JsonProperty(value="id")
+    private String smartRecruiterId;
 
     @Column(name = "job_name")
     private String name;
