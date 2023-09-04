@@ -34,17 +34,3 @@ class Company {
     private String logo;
 }
 
-@Embeddable
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-class Location {
-
-    private String city;
-    private String region;
-    private String country;
-    private Boolean remote;
-
-}
