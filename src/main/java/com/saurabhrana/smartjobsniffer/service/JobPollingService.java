@@ -80,8 +80,8 @@ public class JobPollingService {
         var javaJobs = jobsList.stream().filter(job -> job.getJobAd().getSections().getJobDescription().getText().contains("Java")).collect(Collectors.toList());
 //        var texts = jobsList.stream().map(job -> job.getJobAd().getSections().getQualifications().getText()).collect(Collectors.toList());
         for(var job: jobsList) {
-            System.out.println("job name: " + job.getName());
-            System.out.println("job smart recruiter ID: " + job.getSmartRecruiterId());
+//            System.out.println("job name: " + job.getName());
+//            System.out.println("job smart recruiter ID: " + job.getSmartRecruiterId());
 //            System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
 
             if( job.getJobAd().getSections().getQualifications().getText().contains("Java") || job.getJobAd().getSections().getJobDescription().getText().contains("Java")) {

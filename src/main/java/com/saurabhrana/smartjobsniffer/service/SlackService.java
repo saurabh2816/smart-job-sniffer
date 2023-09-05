@@ -40,7 +40,9 @@ public class SlackService {
         String slackMessage = formatJobsToSlackMessage(jobsToNotify);
 
         // Send the message to Slack (implement your Slack API/Webhook call here)
-        sendMessage(slackMessage);
+        if(!slackMessage.isEmpty()) {
+            sendMessage(slackMessage);
+        }
 
         // Mark these jobs as notified
         jobsToNotify.forEach(job -> {
