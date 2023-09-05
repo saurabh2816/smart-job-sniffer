@@ -36,7 +36,8 @@ public class JobPollingService {
         this.slackService = slackService;
     }
 
-    @Scheduled(fixedRate = 900000)
+    // once every 2 hours
+    @Scheduled(fixedRate = 7200000)
     public void pollApi() {
         WebClient webClient = WebClient.create();
         resultsList = new CopyOnWriteArrayList<>();
