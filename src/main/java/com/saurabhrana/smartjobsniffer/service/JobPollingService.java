@@ -91,7 +91,7 @@ public class JobPollingService {
             }
         }
 
-        slackService.sendMessage("Hi Handsome! I'm thinking of you. Who am I? I am your Job Fetcher Service <3");
+        // slackService.sendMessage("Hi Handsome! I'm thinking of you. Who am I? I am your Job Fetcher Service <3");
 
     }
 
