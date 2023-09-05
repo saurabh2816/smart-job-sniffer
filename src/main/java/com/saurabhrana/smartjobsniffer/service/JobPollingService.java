@@ -36,7 +36,7 @@ public class JobPollingService {
         this.slackService = slackService;
     }
 
-//    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 900000)
     public void pollApi() {
         WebClient webClient = WebClient.create();
         resultsList = new CopyOnWriteArrayList<>();
@@ -90,6 +90,8 @@ public class JobPollingService {
                 }
             }
         }
+
+        slackService.sendMessage("Hi Handsome! I'm thinking of you. Who am I? I am your Job Fetcher Service <3");
 
     }
 
