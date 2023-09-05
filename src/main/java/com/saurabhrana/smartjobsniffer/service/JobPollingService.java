@@ -36,7 +36,7 @@ public class JobPollingService {
         this.slackService = slackService;
     }
 
-    @Scheduled(fixedRate = 3600000)
+//    @Scheduled(fixedRate = 60000)
     public void pollApi() {
         WebClient webClient = WebClient.create();
         resultsList = new CopyOnWriteArrayList<>();
@@ -80,7 +80,8 @@ public class JobPollingService {
 //        var texts = jobsList.stream().map(job -> job.getJobAd().getSections().getQualifications().getText()).collect(Collectors.toList());
         for(var job: jobsList) {
             System.out.println("job name: " + job.getName());
-            System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
+            System.out.println("job smart recruiter ID: " + job.getSmartRecruiterId());
+//            System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
 
             if( job.getJobAd().getSections().getQualifications().getText().contains("Java") || job.getJobAd().getSections().getJobDescription().getText().contains("Java")) {
                 if(!(jobsRepository.findBySmartRecruiterId(job.getSmartRecruiterId()).isPresent())) {

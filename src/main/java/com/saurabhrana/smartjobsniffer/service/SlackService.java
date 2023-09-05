@@ -31,7 +31,7 @@ public class SlackService {
     }
 
 
-    @Scheduled(fixedRate = 3610000)
+//    @Scheduled(fixedRate = 120000)
     public void sendDailyJobUpdates() {
         // Fetch jobs that haven't been notified yet
         List<Jobs> jobsToNotify = jobsRepository.findByNotifiedFalse();
