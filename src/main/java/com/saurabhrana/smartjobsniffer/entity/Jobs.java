@@ -18,6 +18,9 @@ public class Jobs {
     @Column(name = "localId", nullable = false)
     private Long localId;
 
+    @Column(name="notified")
+    private Boolean notified;
+
     @JsonProperty(value="id")
     private String smartRecruiterId;
 
@@ -54,33 +57,5 @@ public class Jobs {
 
     @Embedded
     private Language language;
-}
-
-@Embeddable
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-class Company {
-    private String identifier;
-    @Column(name = "company_name")
-
-    private String name;
-}
-
-@Embeddable
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-class Location {
-    private String city;
-    private String region;
-    private String country;
-    private String address;
-    private String postalCode;
-    private Boolean remote;
 }
 

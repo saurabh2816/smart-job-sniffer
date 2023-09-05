@@ -28,11 +28,15 @@ public class JobPollingService {
     @Autowired
     JobsRepository jobsRepository;
 
-    public JobPollingService(JobsRepository jobsRepository) {
+    @Autowired
+    SlackService slackService;
+
+    public JobPollingService(JobsRepository jobsRepository, SlackService slackService) {
         this.jobsRepository = jobsRepository;
+        this.slackService = slackService;
     }
 
-//    @Scheduled(fixedRate = 10000) // Poll every 5 seconds
+    @Scheduled(fixedRate = 3600000)
     public void pollApi() {
         WebClient webClient = WebClient.create();
         resultsList = new CopyOnWriteArrayList<>();
@@ -46,10 +50,6 @@ public class JobPollingService {
                 .doOnNext(resultsList::add)
                 .doOnTerminate(this::extractActionsUrlForUnitedStates)  // Call after WebClient operation is done
                 .subscribe();
-
-
-
-
     }
 
     private void saveJobPostings(List<String> actionUrls) {
@@ -83,8 +83,10 @@ public class JobPollingService {
             System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
 
             if( job.getJobAd().getSections().getQualifications().getText().contains("Java") || job.getJobAd().getSections().getJobDescription().getText().contains("Java")) {
-                if(!(jobsRepository.findBySmartRecruiterId(job.getSmartRecruiterId()).isPresent()))
+                if(!(jobsRepository.findBySmartRecruiterId(job.getSmartRecruiterId()).isPresent())) {
+                    job.setNotified(false);
                     jobsRepository.save(job);
+                }
             }
         }
 
@@ -95,7 +97,7 @@ public class JobPollingService {
         for (JobPostingDTO jobPosting : resultsList) {
             if (jobPosting.getContent() != null) {
                 for (Content content : jobPosting.getContent()) {
-                    if("in".equals(content.getLocation().getCountry())) {
+                    if("us".equals(content.getLocation().getCountry())) {
                         Actions actions = content.getActions();
                         if (actions != null) {
                             actionUrls.add(actions.getDetails());
@@ -107,6 +109,8 @@ public class JobPollingService {
 
         saveJobPostings(actionUrls.stream().toList());
     }
+
+
 
 //    private void sendToSlack(String message) {
 //        String slackUrl = "https://slack.com/api/chat.postMessage";
