@@ -21,6 +21,11 @@ public class JobController {
         this.slackService = slackService;
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Works.");
+
+    }
     @GetMapping("/jobfetcher")
     public ResponseEntity<String> fetchJobs() {
         jobPollingService.pollApi();
