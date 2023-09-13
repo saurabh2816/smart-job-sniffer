@@ -30,8 +30,10 @@ public class SlackService {
         this.jobsRepository = jobsRepository;
     }
 
-
-    @Scheduled(fixedRate = 3600000)
+    // 4 hr = 14400000
+    // 1 hr =  3600000
+    // 4.2 hrs = 15400000
+    @Scheduled(fixedRate = 15400000)
     public void sendDailyJobUpdates() {
         // Fetch jobs that haven't been notified yet
         List<Jobs> jobsToNotify = jobsRepository.findByNotifiedFalse();
