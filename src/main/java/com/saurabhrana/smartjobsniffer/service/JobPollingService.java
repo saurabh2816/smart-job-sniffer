@@ -77,14 +77,16 @@ public class JobPollingService {
     }
 
     private void checkJobList() {
-        var javaJobs = jobsList.stream().filter(job -> job.getJobAd().getSections().getJobDescription().getText().contains("Java")).collect(Collectors.toList());
+//        var javaJobs = jobsList.stream().filter(job -> !job.getJobAd().getSections().getJobDescription().getText().isEmpty()
+//                && job.getJobAd().getSections().getJobDescription().getText().toLowerCase().contains("java")).collect(Collectors.toList());
 //        var texts = jobsList.stream().map(job -> job.getJobAd().getSections().getQualifications().getText()).collect(Collectors.toList());
         for(var job: jobsList) {
 //            System.out.println("job name: " + job.getName());
 //            System.out.println("job smart recruiter ID: " + job.getSmartRecruiterId());
 //            System.out.println("qualification: " + job.getJobAd().getSections().getQualifications().getText());
 
-            if( job.getJobAd().getSections().getQualifications().getText().contains("Java") || job.getJobAd().getSections().getJobDescription().getText().contains("Java")) {
+            if( !job.getJobAd().getSections().getQualifications().getText().isEmpty()
+                    && job.getJobAd().getSections().getQualifications().getText().toLowerCase().contains("java")) {
                 if(!(jobsRepository.findBySmartRecruiterId(job.getSmartRecruiterId()).isPresent())) {
                     job.setNotified(false);
                     jobsRepository.save(job);
@@ -98,10 +100,24 @@ public class JobPollingService {
 
     public void extractActionsUrlForUnitedStates() {
 
+        String[] keywords = {"staff", "manager", "devops", "data", "principal", "machine", "intern", "reliability"};
+
+
+
         for (JobPostingDTO jobPosting : resultsList) {
+
             if (jobPosting.getContent() != null) {
                 for (Content content : jobPosting.getContent()) {
-                    if("us".equals(content.getLocation().getCountry())) {
+                    boolean ignore = false;
+                    for (String keyword : keywords) {
+                        if (content.getName().toLowerCase().contains(keyword) || "jobs for humanity".contains(content.getCompany().getName().toLowerCase())) {
+                            ignore = true;
+                            break;
+                        }
+                    }
+
+                    if (!ignore && content.getLocation().getRegion()!=null &&("california".equals(content.getLocation().getRegion().toLowerCase()) || "CA".equals(content.getLocation().getRegion())
+                            || "ca".equals(content.getLocation().getRegion().toLowerCase()) ) ) {
                         Actions actions = content.getActions();
                         if (actions != null) {
                             actionUrls.add(actions.getDetails());
