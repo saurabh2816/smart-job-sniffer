@@ -1,5 +1,6 @@
 package com.saurabhrana.smartjobsniffer.DTO;
 
+import com.saurabhrana.smartjobsniffer.entity.Company;
 import jakarta.persistence.*;
 import lombok.*;
 
