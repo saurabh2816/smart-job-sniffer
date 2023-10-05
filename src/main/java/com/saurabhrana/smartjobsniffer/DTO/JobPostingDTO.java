@@ -22,15 +22,15 @@ public class JobPostingDTO {
 
 }
 
-@Embeddable
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-class Company {
-    private String identifier;
-    private String name;
-    private String logo;
-}
-
+//@Embeddable
+//@Getter
+//@Setter
+//@Builder
+//@NoArgsConstructor
+//@AllArgsConstructor
+//class Company {
+//    private String identifier;
+//    private String name;
+//    private String logo;
+//}
+//
